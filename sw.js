@@ -1,6 +1,6 @@
 /* Generated from every runtime asset; scoped independently of other Spirit games. */
 const CACHE_PREFIX = "spirit-apocalypse-ed539f8495-";
-const CACHE_VERSION = CACHE_PREFIX + "c444e8a44ea3";
+const CACHE_VERSION = CACHE_PREFIX + "89195050c3bd";
 const BASE = self.registration.scope;
 const CORE_FILES = [
   "./",

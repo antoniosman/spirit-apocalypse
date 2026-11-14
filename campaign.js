@@ -103,7 +103,7 @@ const Campaign = (function(){
   function split(s,g,playerId){
     if(g.playerIds.length<2||!g.playerIds.includes(playerId)||g.mission)return null;
     const p=s.playerRecords.find(p=>p.playerId===playerId),id='g'+s.nextGroupId++;
-    const following=g.members.filter(n=>!s.players.includes(n)&&relation(s,n,p.characterId).trust>=55).slice(0,1),members=[p.characterId,...following];
+    const following=npcs(s,g).filter(n=>relation(s,n,p.characterId).trust>=55).slice(0,1),members=[p.characterId,...following];
     const inventory={};for(const k of['food','meds','materials']){inventory[k]=Math.floor(g.inventory[k]/g.playerIds.length);g.inventory[k]-=inventory[k];}
     const loc='split-'+id;s.locations[loc]={locationId:loc,name:'Ανατολικός δρόμος · χωριστή διαδρομή',kind:'street'};
     const next={groupId:id,playerIds:[playerId],members,locationId:loc,activeShelterId:null,shelterIds:[],inventory,security:Math.round(g.security/2),danger:g.danger,flags:{splitFrom:g.groupId},mission:null,archived:false};s.groups[id]=next;
