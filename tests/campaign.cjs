@@ -44,6 +44,7 @@ for(let seed=1;seed<40&&!amputation;seed++){const s=ready(['Billy'],'separated',
 assert(amputation);amputation.phase='report';C.advanceEpisode(amputation);assert(amputation.characters.Rino.amputated);check(amputation);
 
 // Full six-episode campaigns: varying decisions, all starts, voting and repeated save/load.
+const finalMeeting=ready(['Billy','Tony','Alex'],'split');finalMeeting.episode=6;C.remove(finalMeeting,'Billy','dead','Finale loss');finalMeeting.locations.shared={locationId:'shared',name:'Real meeting',kind:'meeting'};for(const g of C.groups(finalMeeting)){g.locationId='shared';for(const n of g.members){finalMeeting.characters[n].locationId='shared';finalMeeting.characters[n].shelterId=null;}}const livingMeeting=jump(finalMeeting,11);assert(!livingMeeting.voters.includes('p1'),'a dead player must never vote in a later shared scene');assert.deepEqual(clone(livingMeeting.voters),['p2','p3']);resolve(finalMeeting,'cooperate');check(finalMeeting);
 if(process.env.CAMPAIGN_CASES_ONLY==='1'){console.log('PASS: focused campaign acceptance cases, including mission rescue, shelter recognition and remote guards.');process.exit(0);}
 let campaigns=0,episodes=0,decisions=0,maxBytes=0;
 for(const[count,pattern]of [[1,'separated'],[2,'separated'],[2,'together'],[3,'separated'],[3,'together'],[3,'split']]){

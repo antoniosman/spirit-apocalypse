@@ -7,7 +7,7 @@ digest=hashlib.sha256()
 digest.update(Path(__file__).read_bytes())
 for file in files:
     if file not in ['./','./release.js','./version.json']:digest.update((root/file.removeprefix('./')).read_bytes())
-release={'version':'1.1.2','build':digest.hexdigest()[:12],'name':'The Spirit Apocalypse'}
+release={'version':'1.1.3','build':digest.hexdigest()[:12],'name':'The Spirit Apocalypse'}
 (root/'version.json').write_text(json.dumps(release,indent=2)+'\n',encoding='utf-8')
 (root/'release.js').write_text('const APP_RELEASE = '+json.dumps(release)+';\n',encoding='utf-8')
 prefix='spirit-apocalypse-'+hashlib.sha256(b'/spirit-apocalypse/').hexdigest()[:10]+'-'
