@@ -1,13 +1,13 @@
 from pathlib import Path
 import json,hashlib,sys,shutil
 root=Path(__file__).resolve().parent.parent
-files=['./','./index.html','./styles.css','./character-data.js','./save-validation.js','./scenarios.js','./episodes.js','./app.js','./season.js','./pwa.js','./release.js','./version.json','./manifest.webmanifest']
+files=['./','./index.html','./styles.css','./campaign.css','./campaign.js','./campaign-validation.js','./campaign-ui.js','./character-data.js','./save-validation.js','./scenarios.js','./episodes.js','./app.js','./season.js','./pwa.js','./release.js','./version.json','./manifest.webmanifest']
 files += ['./'+p.relative_to(root).as_posix() for folder in ['assets','icons'] for p in sorted((root/folder).rglob('*')) if p.is_file() and p.name!='app-source.png']
 digest=hashlib.sha256()
 digest.update(Path(__file__).read_bytes())
 for file in files:
     if file not in ['./','./release.js','./version.json']:digest.update((root/file.removeprefix('./')).read_bytes())
-release={'version':'1.0.0','build':digest.hexdigest()[:12],'name':'The Spirit Apocalypse'}
+release={'version':'1.1.0','build':digest.hexdigest()[:12],'name':'The Spirit Apocalypse'}
 (root/'version.json').write_text(json.dumps(release,indent=2)+'\n',encoding='utf-8')
 (root/'release.js').write_text('const APP_RELEASE = '+json.dumps(release)+';\n',encoding='utf-8')
 prefix='spirit-apocalypse-'+hashlib.sha256(b'/spirit-apocalypse/').hexdigest()[:10]+'-'

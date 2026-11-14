@@ -1,5 +1,6 @@
 /* Shared by autosave and manual JSON import. No DOM dependencies. */
 function validGameSnapshot(raw){
+  if(raw&&raw.version===2)return validCampaignSnapshot(raw);
   const names=['Alex','Billy','Catherine','Demarin','Elisa','Ester','Eva','Evaggelia','Evelyn','Hope','Ian','Irene','Jasmine','Luna','Paul','Pauline','Phillip','Rino','Sargenie','Smaragda','Sorina','Tony','Vicky','Vincent','Violet','Zoe'];
   const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
   const number=(v,min,max)=>Number.isFinite(v)&&v>=min&&v<=max;

@@ -1,11 +1,15 @@
 /* Generated from every runtime asset; scoped independently of other Spirit games. */
 const CACHE_PREFIX = "spirit-apocalypse-ed539f8495-";
-const CACHE_VERSION = CACHE_PREFIX + "59ef5f608cb5";
+const CACHE_VERSION = CACHE_PREFIX + "4df879b9309f";
 const BASE = self.registration.scope;
 const CORE_FILES = [
   "./",
   "./index.html",
   "./styles.css",
+  "./campaign.css",
+  "./campaign.js",
+  "./campaign-validation.js",
+  "./campaign-ui.js",
   "./character-data.js",
   "./save-validation.js",
   "./scenarios.js",
@@ -46,6 +50,7 @@ const CORE_FILES = [
   "./assets/characters/char_violet.png",
   "./assets/characters/char_zoe-hq.png",
   "./assets/cinematic/city-dawn.webp",
+  "./assets/cinematic/clinic-dusk.webp",
   "./assets/cinematic/forest-road.webp",
   "./assets/cinematic/spirit-apocalypse-logo.png",
   "./icons/app-192.png",

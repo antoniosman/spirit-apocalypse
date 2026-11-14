@@ -1,35 +1,36 @@
-# The Spirit Apocalypse
-
-Six-episode, browser-based survival story in the Spirit Universe.
+# The Spirit Apocalypse — 1.1
 
 [Play](https://antoniosman.github.io/spirit-apocalypse/)
 
-Choose 1–3 local players, watch or skip the cinematic opening, and decide who survives. Save automatically, use three manual slots, or export/import a save to transfer it between devices. Install the game from the install button; on iPhone, use Safari → Share → Add to Home Screen.
+A six-episode survival story in the Spirit Universe, with 26 playable cast members, local play for 1–3 people, and 100 authored optional encounters.
 
-The app checks for updates at launch, every 15 minutes while open, when returning to the app, and when connectivity returns. The ↻ button checks immediately. Updates save the current game and reload automatically, waiting for cinematics and open dialogs to finish. Offline assets include every portrait, cinematic image and original audio file. Local saves are separate from the asset cache and survive updates.
+New stories support solo, separated, together and three-player 2+1 starts. Each physical group has its own people, location, inventory and persistent shelters. Radio contact does not merge groups. Meeting, pooling resources, choosing a common home and separating again are real story decisions.
+
+RELATIONSHIPS distinguishes affinity from trust and lets you inspect either direction for each playable character. Unknown people have no displayed percentage. Major choices use portraits, confirmation and a cinematic consequence before the story continues. Injuries, amputations, deaths, missing people, shelters and random outcomes persist through save/load and all six episodes.
+
+## Saves
+
+Autosave, three manual slots and JSON export/import are available. Previous version-1 saves remain playable with their original story engine and show an explanatory notice. Start a new story to use the independent-group campaign; existing progress is not silently reset or assigned a made-up past.
+
+## Install and updates
+
+Use INSTALL APP; on iPhone use Safari → Share → Add to Home Screen. Browser and installed-app storage can differ; export/import transfers progress. OFFLINE READY confirms that every local portrait, cinematic image and audio asset is cached.
+
+Updates check at launch, on returning, after reconnection and every 15 minutes. ↻ checks immediately. An update saves progress and waits for cinematics, save/load, relationships and confirmation dialogs before applying.
 
 ## Development
 
-No package installation or build framework is required. Use Python 3 and Node 22+:
+No dependency installation is needed. Use Node 22+ and Python 3:
 
 ```sh
 node tests/engine.cjs
+node tests/campaign.cjs
 python scripts/prepare-release.py --dist
 python -m http.server 4173 --directory dist
 ```
 
-`prepare-release.py` fingerprints runtime assets and generates `release.js`, `version.json`, and `sw.js`. Run it after editing source; `--dist` prepares the deployable game. GitHub Actions runs continuity tests, prepares these files and publishes the `dist` artifact on every push to `main`. Configure Pages to use GitHub Actions.
+The preparation script fingerprints assets and generates `release.js`, `version.json`, `sw.js` and `dist`. GitHub Actions runs both test suites and publishes `dist` on pushes to `main`.
 
-## This update
+`campaign.js` owns version-2 state and deterministic outcomes; `campaign-ui.js` renders it. The original `app.js` / `season.js` engine remains for legacy saves. `campaign-validation.js` checks identity links, voting and scene caches; the shared save dialog handles both formats.
 
-- Custom app icon with dedicated iOS touch icon, Android maskable icon and favicon. Generated with built-in ImageGen, based on the existing game's gold/copper eclipse branding; source is `icons/app-source.png`.
-- Install instructions contain only player-facing steps.
-- Automatic updates with preserved state and a manual check button.
-- Stable cached scene details and RNG state across redraws, voting and save/load.
-- Split-screen rescue choices with matching names, portraits and saved targets.
-- Imported and automatic saves share schema/content validation. Failed storage writes report an error.
-- Starting character selection preserves the previous autosave until a new game starts.
-- Exiling the accused after the scripted betrayal targets the recorded suspect when present.
-- Canonical character genders and Greek grammatical helpers copied from Spirit Slasher v1.26.0; all 26 cast cards display the corresponding she/her or he/him pronouns. Named dialogue and outcome text use the same metadata.
-
-The large requirements document also describes further story expansion, separate-player starts, and a persistent shelter simulation. Those are future design work; this update audits and repairs the existing engine and does not claim to implement that entire document.
+See `CHANGELOG_1_1.md`, `QA_1_1.md`, `ICON_PROMPT.md` and `ASSET_NOTES.md`. This remains a beta narrative game; automated tests do not certify every possible story combination or replace tests on physical phones.

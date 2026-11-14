@@ -406,7 +406,7 @@ function renderIntro(){
   app.innerHTML='<div class="intro-screen"><div class="intro-copy"><div class="eyebrow">SPIRIT UNIVERSE PRESENTS / SEASON 01</div>'+
     '<h1>EVERYTHING<br/><span>WAS NORMAL.</span><br/>UNTIL IT WASN’T.</h1>'+
     '<p>Η αυλαία ανοίγει σαν πραγματική σειρά: κινηματογραφικές εικόνες, προσωπικά credits του cast, πρωτότυπη σκοτεινή μουσική και ένα τελικό title reveal. Μετά ξεκινά η πρώτη σου απόφαση.</p>'+
-    '<blockquote>"+(s.players.length===1?"Ξυπνάς "+genderWord(lead,"μόνος","μόνη"):"Ξυπνάτε μαζί")+". Οι δρόμοι είναι άδειοι. Κανείς δεν σου έχει υποσχεθεί ότι θα έρθει να σε βρει.</blockquote>'+ 
+    '<blockquote>'+(s.players.length===1?'Ξυπνάς '+genderWord(lead,'μόνος','μόνη'):'Ξυπνάτε μαζί')+'. Οι δρόμοι είναι άδειοι. Κανείς δεν σου έχει υποσχεθεί ότι θα έρθει να σε βρει.</blockquote>'+
     '<button class="btn primary" data-action="enter">▶ PLAY CINEMATIC OPENING</button><p class="tiny" style="margin-top:13px">~44 ΔΕΥΤΕΡΟΛΕΠΤΑ · ORIGINAL MUSIC · SKIP AVAILABLE</p></div>'+
     '<div class="intro-photo">'+image(lead)+'<div class="intro-photo-label"><small>THE STORY OF</small><strong>'+lead+'</strong><small>DAY 00 — 08:17 AM</small></div></div></div>';
 }
@@ -442,6 +442,7 @@ function renderReport(){
     '<div class="button-row"><button class="btn" data-action="home">ΑΡΧΙΚΗ</button><button class="btn primary" data-action="new">ΝΕΟ PLAYTHROUGH ↗</button></div></div></div>';
 }
 function render(){
+  if(s&&s.version===2){if(typeof campaignRender==='function')return campaignRender();return;}
   document.title="THE SPIRIT APOCALYPSE — "+(s&&s.phase==="story"?"EP 01":s&&s.phase==="report"?"EPISODE COMPLETE":"SEASON 01");
   if(!s||s.phase==="home")renderHome();
   else if(s.phase==="setup")renderSetup();

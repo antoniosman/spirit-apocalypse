@@ -11,7 +11,7 @@ const ctx=vm.createContext({console,setTimeout(){return 1},clearTimeout(){},setI
   window:{addEventListener(){},scrollTo(){}},navigator:{},location:{protocol:'file:',hostname:''}});
 for(const name of ['character-data.js','save-validation.js','scenarios.js','episodes.js','app.js','season.js']){
   let code=fs.readFileSync(path.join(root,name),'utf8');
-  if(name==='season.js')code=code.replace(/enhanceHeader\(\);\s*render\(\);/,'globalThis.engine={nextEpisode,validSnapshot,normalize};showDeaths=function(){};');
+  if(name==='season.js')code=code.replace(/enhanceHeader\(\);[\s\S]*?render\(\);\s*\}\)\(\);/,'globalThis.engine={nextEpisode,validSnapshot,normalize};showDeaths=function(){};})();');
   vm.runInContext(code,ctx,{filename:name});
 }
 const run=code=>vm.runInContext(code,ctx);
@@ -53,6 +53,9 @@ for(let players=1;players<=3;players++){
   }
 }
 run("setup={count:1,selected:['Alex']};s=null;newRun();s.phase='story';scene();");
+run("renderIntro();");
+assert(run('app.innerHTML.includes("Ξυπνάς μόνη")'),'female opening text is evaluated');
+assert(!run('app.innerHTML.includes("genderWord")'),'never display JavaScript in intro copy');
 for(const mutation of ["bad.players=['Alex','Alex']","bad.resources.food='three'","bad.seed=0","bad.step=1.5","bad.flags.evil='<img src=x onerror=alert(1)>'","bad.status.Ghost='group'","delete bad.votes","bad.decisions=[{}]"]){
   run('globalThis.bad=JSON.parse(JSON.stringify(s));'+mutation);
   assert.equal(run('engine.validSnapshot(bad)'),false,'reject '+mutation);

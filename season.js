@@ -28,6 +28,7 @@ const SAVE_SLOTS = 3;
 function html(v){return String(v??"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function eventLog(message){if(!s.notices)s.notices=[];s.notices.push(message);}
 function normalize(){
+  if(s&&s.version===2)return;
   if(!s||!s.players||!s.players.length)return;
   s.episode=s.episode||1;
   s.usedScenarios=s.usedScenarios||[];
@@ -712,7 +713,7 @@ function renderSaveModal(){
   });
   layer.querySelector("#save-file-input").addEventListener("change",async function(e){
     const file=e.target.files[0];if(!file)return;
-    if(file.size>800000){announce("Το αρχείο είναι υπερβολικά μεγάλο.");return;}
+    if(file.size>3000000){announce("Το αρχείο είναι υπερβολικά μεγάλο.");return;}
     try{
       const parsed=JSON.parse(await file.text());
       if(!validSnapshot(parsed))throw new Error("invalid");
@@ -743,5 +744,6 @@ window.addEventListener("keydown",function(e){
     const help=document.querySelector("#install-help");if(help)help.remove();}
 });
 enhanceHeader();
+window.SpiritSeason={startAmbient:startAmbient,stopAmbient:stopAmbient,resetPlayback:resetPlayback};
 render();
 })();
