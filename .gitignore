@@ -1,0 +1,6 @@
+dist/
+.playwright-cli/
+invalid-state.json
+__pycache__/
+*.zip
+node_modules/
