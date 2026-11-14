@@ -54,6 +54,7 @@ const Campaign = (function(){
     const c=s.characters[n];if(!c||c.life!=='alive'||(c.groupId&&c.groupId!==g.groupId))return false;
     c.locationId=g.locationId;meet(s,g,[n]);c.groupId=g.groupId;c.reservedFor=null;c.shelterId=g.activeShelterId&&s.shelters[g.activeShelterId].locationId===g.locationId?g.activeShelterId:null;
     if(!g.members.includes(n))g.members.push(n);
+    if(g.mission&&!g.mission.participants.includes(n))g.mission.participants.push(n);
     for(const p of playerNames(s,g)){adjust(s,n,p,13,17,reason);adjust(s,p,n,8,9,'Αποδοχή νέου μέλους.');}return true;
   }
   function remove(s,n,life,reason){
@@ -73,7 +74,7 @@ const Campaign = (function(){
     if(!home){const id='h'+s.nextShelterId++,loc='shelter-'+id;s.locations[loc]={locationId:loc,name:title,kind:'shelter'};home={shelterId:id,groupId:g.groupId,name:title,locationId:loc,security:38,fortification:25,status:'active',history:['Εγκατάσταση στο Επεισόδιο '+s.episode+'.']};s.shelters[id]=home;g.shelterIds.push(id);}
     for(const h of g.shelterIds){if(h!==home.shelterId&&s.shelters[h].status==='active'){s.shelters[h].status='abandoned';s.shelters[h].history.push('Η ομάδα επέλεξε άλλη μόνιμη βάση.');}}
     home.groupId=g.groupId;home.status='active';home.history.push('Η ομάδα εγκαταστάθηκε εδώ.');g.activeShelterId=home.shelterId;g.locationId=home.locationId;
-    g.members.filter(n=>live(s,n)).forEach(n=>{s.characters[n].locationId=home.locationId;s.characters[n].shelterId=home.shelterId;});g.mission=null;return home;
+    g.members.filter(n=>live(s,n)).forEach(n=>{s.characters[n].locationId=home.locationId;s.characters[n].shelterId=home.shelterId;});g.mission=null;meet(s,g,g.members);return home;
   }
   function abandon(s,g,destroy=false){
     const home=s.shelters[g.activeShelterId];if(!home)return;
@@ -91,7 +92,7 @@ const Campaign = (function(){
   }
   function returnMission(s,g){
     if(!g.mission)return false;const mission=g.mission,home=s.shelters[mission.originShelterId];g.mission=null;
-    if(home&&home.status==='active'){g.locationId=home.locationId;g.activeShelterId=home.shelterId;mission.participants.filter(n=>live(s,n)&&s.characters[n].groupId===g.groupId).forEach(n=>{s.characters[n].locationId=home.locationId;s.characters[n].shelterId=home.shelterId;});home.history.push('Επιστροφή εξόρμησης στο Επεισόδιο '+s.episode+'.');return true;}return false;
+    if(home&&home.status==='active'){g.locationId=home.locationId;g.activeShelterId=home.shelterId;mission.participants.filter(n=>live(s,n)&&s.characters[n].groupId===g.groupId).forEach(n=>{s.characters[n].locationId=home.locationId;s.characters[n].shelterId=home.shelterId;});meet(s,g,present(s,g));home.history.push('Επιστροφή εξόρμησης στο Επεισόδιο '+s.episode+'.');return true;}return false;
   }
   function merge(s,aId,bId){
     const a=s.groups[aId],b=s.groups[bId];if(!a||!b||a.archived||b.archived||a.groupId===b.groupId||a.locationId!==b.locationId)return null;
