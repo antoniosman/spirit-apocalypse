@@ -1,12 +1,15 @@
 /* Generated from every runtime asset; scoped independently of other Spirit games. */
 const CACHE_PREFIX = "spirit-apocalypse-ed539f8495-";
-const CACHE_VERSION = CACHE_PREFIX + "fa5ccea94f46";
+const CACHE_VERSION = CACHE_PREFIX + "be236f8c1da2";
 const BASE = self.registration.scope;
 const CORE_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./campaign.css",
+  "./intro.css",
+  "./intro-data.js",
+  "./intro-player.js",
   "./campaign.js",
   "./campaign-validation.js",
   "./campaign-ui.js",
@@ -20,6 +23,7 @@ const CORE_FILES = [
   "./release.js",
   "./version.json",
   "./manifest.webmanifest",
+  "./assets/audio/intro-music-apocalypse.mp3",
   "./assets/audio/spirit-apocalypse-death-sting.mp3",
   "./assets/audio/spirit-apocalypse-original-theme.mp3",
   "./assets/audio/spirit-apocalypse-survival-ambient.mp3",

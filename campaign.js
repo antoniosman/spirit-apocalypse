@@ -47,13 +47,14 @@ const Campaign = (function(){
       meet(s,g,g.members);
     });
     for(const [a,b]of RELATIONS){relation(s,a,b);relation(s,b,a);}
-    resetQueue(s);return s;
+    resetQueue(s);SpiritIntro.capture(s);return s;
   }
   function resetQueue(s){s.turn.queue=playableGroups(s).map(g=>g.groupId);s.turn.queueIndex=0;s.turn.groupId=s.turn.queue[0]||null;s.turn.votes=[];s.turn.result=null;s.turn.sceneId=null;}
   function recruit(s,g,n,reason='Η ομάδα προσέφερε προστασία.'){
     const c=s.characters[n];if(!c||c.life!=='alive'||(c.groupId&&c.groupId!==g.groupId))return false;
     c.locationId=g.locationId;meet(s,g,[n]);c.groupId=g.groupId;c.reservedFor=null;c.shelterId=g.activeShelterId&&s.shelters[g.activeShelterId].locationId===g.locationId?g.activeShelterId:null;
     if(!g.members.includes(n))g.members.push(n);
+    if(!s.players.includes(n)&&!c.joinedEpisode)c.joinedEpisode=s.episode;
     if(g.mission&&!g.mission.participants.includes(n))g.mission.participants.push(n);
     for(const p of playerNames(s,g)){adjust(s,n,p,13,17,reason);adjust(s,p,n,8,9,'Αποδοχή νέου μέλους.');}return true;
   }
@@ -249,7 +250,7 @@ const Campaign = (function(){
     while(s.turn.queueIndex<s.turn.queue.length&&!playableGroups(s).some(g=>g.groupId===s.turn.queue[s.turn.queueIndex]))s.turn.queueIndex++;
     if(s.turn.queueIndex>=s.turn.queue.length){s.turn.round++;if(s.turn.round>=18||!playableGroups(s).length){s.phase='report';return true;}resetQueue(s);}else{s.turn.groupId=s.turn.queue[s.turn.queueIndex];}return true;
   }
-  function advanceEpisode(s){if(s.phase!=='report'||s.episode>=6)return false;s.episode++;s.phase='intro';s.turn.round=0;s.pendingCinematic=null;resetQueue(s);return true;}
-  function introActors(s){return s.players.concat(names().filter(n=>!s.players.includes(n)&&s.characters[n].metEpisode&&s.characters[n].metEpisode<s.episode&&live(s,n))).filter(n=>live(s,n));}
+  function advanceEpisode(s){if(s.phase!=='report'||s.episode>=6)return false;s.episode++;s.phase='intro';s.turn.round=0;s.pendingCinematic=null;resetQueue(s);SpiritIntro.capture(s);return true;}
+  function introActors(s){return SpiritIntro.snapshot(s).actors;}
   return {create,copy,roll,pick,groups,activeGroup,activePlayer,playerNames,present,npcs,label,location,scene,choose,advance,advanceEpisode,dismissCinematic,meet,recruit,remove,settle,abandon,departMission,returnMission,merge,split,relation,adjust,introActors,live};
 })();

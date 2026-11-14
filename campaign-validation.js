@@ -4,6 +4,7 @@ function validCampaignSnapshot(s){
     const obj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v),integer=(v,min,max)=>Number.isInteger(v)&&v>=min&&v<=max;
     const names=Object.keys(characterGenders),metric=v=>Number.isFinite(v)&&v>=0&&v<=100;
     if(!obj(s)||s.version!==2||!['intro','story','report'].includes(s.phase)||!integer(s.episode,1,6)||!integer(s.seed,-2147483648,4294967295)||s.seed===0)return false;
+    if(!SpiritIntro.validSnapshots(s))return false;
     if(!Array.isArray(s.players)||s.players.length<1||s.players.length>3||new Set(s.players).size!==s.players.length||!s.players.every(n=>names.includes(n)))return false;
     if(!obj(s.characters)||names.some(n=>!obj(s.characters[n]))||Object.keys(s.characters).length!==names.length)return false;
     if(!obj(s.groups)||!obj(s.locations)||!obj(s.shelters)||!obj(s.relations)||!obj(s.flags)||!obj(s.scenes))return false;

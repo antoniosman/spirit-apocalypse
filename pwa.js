@@ -53,7 +53,7 @@
     return true;
   }
   function applyUpdate(){
-    if(!pendingUpdate||!registration?.waiting||document.hidden||opening||document.querySelector('#death-cinema,#save-dialog,#install-help,#campaign-confirm,#relationships-dialog'))return;
+    if(!pendingUpdate||!registration?.waiting||document.hidden||opening||document.querySelector('#death-cinema,#save-dialog,#install-help,#campaign-confirm,#relationships-dialog,#intro-replay-menu'))return;
     if(!prepareResume())return;
     pendingUpdate=false;update.disabled=true;
     announce('Η νέα έκδοση είναι έτοιμη. Η πρόοδός σου αποθηκεύτηκε.');

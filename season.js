@@ -607,6 +607,7 @@ function nextEpisode(){
   if(!s||s.episode>=6)return;
   stopAmbient();
   s.episode++;
+  SpiritIntro.capture(s);
   s.step=0;s.phase="intro";s.votes=[];s.result=null;s.activeScenario=null;
   s.bitten=null;s.rescueTargets=[];s.episodeStartDeaths=dead().length;
   s.episodeStartChoices=s.decisions.length;
@@ -678,15 +679,21 @@ function renderSaveModal(){
     Array.from({length:SAVE_SLOTS},function(_,i){const info=slotInfo(i);return '<div class="save-slot"><div><strong>SLOT 0'+(i+1)+'</strong><small>'+(info?'EPISODE 0'+info.episode+' · '+html(info.players)+' · '+html(info.date):"EMPTY SLOT")+'</small></div>'+
       '<div class="save-actions"><button data-save="store" data-slot="'+i+'" '+(!s||!s.players.length?"disabled":"")+'>SAVE</button>'+
       '<button data-save="load" data-slot="'+i+'" '+(!info?"disabled":"")+'>LOAD</button>'+
-      '<button data-save="delete" data-slot="'+i+'" '+(!info?"disabled":"")+'>✕</button></div></div>';}).join("")+
+      '<button data-save="delete" data-slot="'+i+'" '+(!info?"disabled":"")+'>✕</button>'+
+      '<button data-save="replay-slot" data-slot="'+i+'" '+(!info?"disabled":"")+'>▶ INTRO</button></div></div>';}).join("")+
     '<div class="save-transfer"><button class="btn" data-save="export" '+(!s||!s.players.length?"disabled":"")+'>↓ EXPORT SAVE (.JSON)</button>'+
-    '<button class="btn" data-save="import">↑ IMPORT SAVE</button><input id="save-file-input" type="file" accept=".json,application/json" hidden /></div>'+
+    '<button class="btn" data-save="replay" '+(!s||!s.players.length?"disabled":"")+'>▶ REPLAY INTRO</button><button class="btn" data-save="import">↑ IMPORT SAVE</button><input id="save-file-input" type="file" accept=".json,application/json" hidden /></div>'+
     '<p class="tiny">Τα τοπικά saves αποθηκεύονται στον συγκεκριμένο browser. Για μεταφορά ή ασφάλεια, χρησιμοποίησε EXPORT.</p></div>';
   document.body.append(layer);saveDialogOpen=true;
   layer.addEventListener("click",async function(e){
     const btn=e.target.closest("[data-save]");if(!btn)return;
     const cmd=btn.dataset.save,slot=Number(btn.dataset.slot||0);
     if(cmd==="close"){layer.remove();saveDialogOpen=false;return;}
+    if(cmd==="replay"||cmd==="replay-slot"){
+      const source=cmd==="replay-slot"?slotInfo(slot)?.state:s;
+      if(!source)return;
+      layer.remove();saveDialogOpen=false;window.SpiritIntroUI?.openReplay(source);return;
+    }
     if(cmd==="store"){
       if(!s||!s.players.length)return;
       const snapshot=JSON.parse(JSON.stringify(s));

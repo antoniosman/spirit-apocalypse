@@ -25,6 +25,8 @@ jobs:
         run: node tests/engine.cjs
       - name: Check independent campaigns
         run: node tests/campaign.cjs
+      - name: Check episode intro timing and history
+        run: node tests/intro.cjs
       - name: Prepare version and offline assets
         run: python3 scripts/prepare-release.py --dist
       - uses: actions/configure-pages@v5

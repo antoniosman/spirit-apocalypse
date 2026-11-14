@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.join(__dirname,'..'),ctx=vm.createContext({console});
-for(const f of ['character-data.js','scenarios.js','episodes.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
+for(const f of ['character-data.js','intro-data.js','scenarios.js','episodes.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
 vm.runInContext(fs.readFileSync(path.join(root,'app.js'),'utf8').match(/const RELATIONS = \[[\s\S]*?\n\];/)[0],ctx);
 for(const f of ['campaign.js','campaign-validation.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
 const C=vm.runInContext('Campaign',ctx),valid=vm.runInContext('validCampaignSnapshot',ctx),json=v=>JSON.stringify(v),clone=v=>JSON.parse(json(v));
