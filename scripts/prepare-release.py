@@ -1,7 +1,7 @@
 from pathlib import Path
 import json,hashlib,sys,shutil
 root=Path(__file__).resolve().parent.parent
-files=['./','./index.html','./styles.css','./save-validation.js','./scenarios.js','./episodes.js','./app.js','./season.js','./pwa.js','./release.js','./version.json','./manifest.webmanifest']
+files=['./','./index.html','./styles.css','./character-data.js','./save-validation.js','./scenarios.js','./episodes.js','./app.js','./season.js','./pwa.js','./release.js','./version.json','./manifest.webmanifest']
 files += ['./'+p.relative_to(root).as_posix() for folder in ['assets','icons'] for p in sorted((root/folder).rglob('*')) if p.is_file() and p.name!='app-source.png']
 digest=hashlib.sha256()
 digest.update(Path(__file__).read_bytes())

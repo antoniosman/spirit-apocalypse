@@ -9,7 +9,7 @@ const ctx=vm.createContext({console,setTimeout(){return 1},clearTimeout(){},setI
   localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)},
   document:{querySelector:()=>node,addEventListener(){},title:'',body:node},
   window:{addEventListener(){},scrollTo(){}},navigator:{},location:{protocol:'file:',hostname:''}});
-for(const name of ['save-validation.js','scenarios.js','episodes.js','app.js','season.js']){
+for(const name of ['character-data.js','save-validation.js','scenarios.js','episodes.js','app.js','season.js']){
   let code=fs.readFileSync(path.join(root,name),'utf8');
   if(name==='season.js')code=code.replace(/enhanceHeader\(\);\s*render\(\);/,'globalThis.engine={nextEpisode,validSnapshot,normalize};showDeaths=function(){};');
   vm.runInContext(code,ctx,{filename:name});

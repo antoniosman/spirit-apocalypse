@@ -1,11 +1,12 @@
 /* Generated from every runtime asset; scoped independently of other Spirit games. */
 const CACHE_PREFIX = "spirit-apocalypse-ed539f8495-";
-const CACHE_VERSION = CACHE_PREFIX + "c3b767cb8c96";
+const CACHE_VERSION = CACHE_PREFIX + "59ef5f608cb5";
 const BASE = self.registration.scope;
 const CORE_FILES = [
   "./",
   "./index.html",
   "./styles.css",
+  "./character-data.js",
   "./save-validation.js",
   "./scenarios.js",
   "./episodes.js",

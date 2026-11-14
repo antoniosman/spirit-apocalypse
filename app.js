@@ -24,7 +24,7 @@ const ROSTER = [
   ["Sargenie","char_sargenie-hq.png"],["Smaragda","char_smaragda-hq.png"],["Sorina","char_sorina.png"],
   ["Tony","char_tony.webp"],["Vicky","char_vicky.jpg"],["Vincent","char_vincent.jpg"],
   ["Violet","char_violet.png"],["Zoe","char_zoe-hq.png"]
-].map(function(item){return {name:item[0],file:item[1]};});
+].map(function(item){return {name:item[0],file:item[1],gender:characterGenders[item[0]],pronouns:characterPronouns[item[0]]};});
 const RELATIONS = [
   ["Luna","Hope","Δίδυμες αδελφές"],["Demarin","Irene","Αδελφές"],
   ["Catherine","Evaggelia","Αδελφές"],["Rino","Pauline","Αδέλφια"],
@@ -65,7 +65,7 @@ function photo(name){return "assets/characters/"+(person(name)||ROSTER[0]).file;
 function image(name,cls){return '<img src="'+photo(name)+'" alt="'+name+'" class="'+(cls||"")+'" loading="lazy" onerror="this.style.opacity=0" />';}
 function relation(a,b){return RELATIONS.find(function(x){return (x[0]===a&&x[1]===b)||(x[1]===a&&x[0]===b);});}
 function links(name){return RELATIONS.filter(function(x){return x[0]===name||x[1]===name;}).map(function(x){return {name:x[0]===name?x[1]:x[0],label:x[2]};});}
-function isMale(name){return ["Billy","Ian","Paul","Phillip","Rino","Sargenie","Tony","Vincent"].includes(name);}
+function isMale(name){return characterGenders[name]==="male";}
 function alive(name){return s.status[name]!=="dead" && s.status[name]!=="missing";}
 function inGroup(){return Object.keys(s.status).filter(function(n){return s.status[n]==="group"||s.status[n]==="bitten"||s.status[n]==="wounded";});}
 function others(){return inGroup().filter(function(n){return !s.players.includes(n);});}
@@ -120,7 +120,7 @@ function relationshipAfterLoss(name){
   trust(witness.name,-13);
   s.flags.grief=s.flags.grief||[];
   s.flags.grief.push({lost:name,witness:witness.name,bond:witness.bond});
-  return " Η απώλεια του/της "+name+" συγκλονίζει ιδιαίτερα "+witness.name+". Η σχέση τους ("+witness.bond+") δεν μπορεί να ξεχαστεί.";
+  return " Η απώλεια "+genitiveName(name)+" συγκλονίζει ιδιαίτερα "+witness.name+". Η σχέση τους ("+witness.bond+") δεν μπορεί να ξεχαστεί.";
 }
 function actorClose(actor){let link=links(actor).find(function(l){return s.status[l.name]==="group";});return link?{player:actor,name:link.name,label:link.label}:null;}
 function displayName(name){return name||"κάποιος";}
@@ -230,7 +230,7 @@ function scene(){
         {id:"openup",name:"Μίλα ειλικρινά με "+speaker,hint:"Μια προσωπική στιγμή μπορεί να χτίσει εμπιστοσύνη."},
         {id:"apologize",name:"Ζήτησε συγγνώμη για τις δύσκολες αποφάσεις",hint:"Κάποιοι χρειάζονται να ακούσουν ότι τους καταλαβαίνεις."},
         {id:"suppliesCheck",name:"Έλεγξε το κρυφό ντουλάπι",hint:"Ψάξε χρήσιμους πόρους πριν φύγετε."},
-        {id:"watch",name:"Ανάλαβε μόνος/η τη σκοπιά",hint:"Άφησε τους άλλους να ξεκουραστούν."}
+        {id:"watch",name:"Ανάλαβε τη σκοπιά",hint:"Άφησε τους άλλους να ξεκουραστούν."}
       ]
     };
   }
@@ -276,7 +276,7 @@ function sceneEffect(id){
   if(s.step===0){
     if(id==="call"){
       if(s.players.length>1){const contacts=s.players.map(actorClose).filter(Boolean);const names=[...new Set(contacts.map(function(c){trust(c.name,15);return c.name;}))];s.flags.called=names;report.text=names.length?"Καταφέρνετε να επικοινωνήσετε με "+names.join(", ")+". Οι προσωπικοί δεσμοί της ομάδας γίνονται η πρώτη σας δύναμη.":"Προλαβαίνετε να ειδοποιήσετε ανθρώπους πριν καταρρεύσουν οι τηλεφωνικές γραμμές.";}
-      else if(close){trust(close.name,16);s.flags.called=close.name;report.text="Κατάφερες να μιλήσεις με "+close.name+". Η φωνή του/της σπάει όταν ακούει τη δική σου. Υποσχεθήκατε ότι δεν θα χαθείτε.";}
+      else if(close){trust(close.name,16);s.flags.called=close.name;report.text="Κατάφερες να μιλήσεις με "+close.name+". Η φωνή "+genderWord(close.name,"του","της")+" σπάει όταν ακούει τη δική σου. Υποσχεθήκατε ότι δεν θα χαθείτε.";}
       else {allTrust(5);report.text="Συγκέντρωσες φίλους πριν πέσουν οι γραμμές. Για λίγο, το χάος μοιάζει λιγότερο μοναχικό.";}
     }else if(id==="supplies"){s.resources.food+=2;s.resources.meds+=1;report.text="Γεμίζεις ένα σακίδιο με κονσέρβες, νερό και επιδέσμους. Το βάρος του δεν σου αφήνει περιθώριο να τρέξεις γρήγορα.";}
     else if(id==="rescue"){let n=newAlly();addAlly(n);trust(n,22);s.flags.firstRescue=n;report.text="Ανοίγεις την πόρτα την τελευταία στιγμή. "+n+" μπαίνει τρέχοντας και σε κοιτάζει με μάτια γεμάτα ευγνωμοσύνη. Μόλις έσωσες μια ζωή.";s.danger+=1;}
@@ -288,12 +288,12 @@ function sceneEffect(id){
     else {s.danger=Math.max(1,s.danger-1);allTrust(-6);report.text="Φεύγετε βιαστικά. Μερικοί πίσω σας ζητούν βοήθεια. Κανείς δεν γυρίζει. Η σιωπή μέσα στην ομάδα βαραίνει.";}
   } else if(s.step===2){
     if(id==="tunnel"){s.danger+=2;if(chance(.36)){s.resources.food=Math.max(0,s.resources.food-1);report.text="Στο σκοτάδι χάνετε μέρος των προμηθειών. Βγαίνετε τρέχοντας στο φως, με τον ήχο βημάτων πίσω σας.";}else{report.text="Ο σκοτεινός διάδρομος αποδεικνύεται σύντομος. Φτάνετε στο καταφύγιο προτού σας εντοπίσουν."}}
-    else if(id==="roofs"){s.danger+=1;if(chance(.38)&&others().length>2){let n=pick(others());s.status[n]="wounded";s.resources.meds=Math.max(0,s.resources.meds-1);report.text=n+" πέφτει σε ένα μεταλλικό στέγαστρο και τραυματίζεται. Τον/την τραβάτε πάνω, αλλά χρειάζεστε επιδέσμους.";}else{report.text="Περνάτε πάνω από τις ταράτσες. Για πρώτη φορά βλέπετε το μέγεθος της καταστροφής."}}
+    else if(id==="roofs"){s.danger+=1;if(chance(.38)&&others().length>2){let n=pick(others());s.status[n]="wounded";s.resources.meds=Math.max(0,s.resources.meds-1);report.text=n+" πέφτει σε ένα μεταλλικό στέγαστρο και τραυματίζεται. "+genderWord(n,"Τον","Την")+" τραβάτε πάνω, αλλά χρειάζεστε επιδέσμους.";}else{report.text="Περνάτε πάνω από τις ταράτσες. Για πρώτη φορά βλέπετε το μέγεθος της καταστροφής."}}
     else if(id==="hospital"){s.resources.meds+=2;s.danger+=2;report.text="Το νοσοκομείο είναι γεμάτο εγκαταλελειμμένα φορεία. Βρίσκετε φάρμακα, αλλά ακούτε κάτι να σας ακολουθεί ανάμεσα στους θαλάμους.";}
     else {s.resources.food=Math.max(0,s.resources.food-1);s.resources.security+=1;report.text="Η παράκαμψη σας κοστίζει τροφή, όμως βρίσκετε ένα μέρος όπου μπορείτε να κλείσετε τα παράθυρα και να ανάψετε μια μικρή φωτιά.";}
   } else if(s.step===3){
     const n=s.bitten;
-    if(id==="isolate"){s.flags.bite="isolated";s.status[n]="missing";trust(n,-15);allTrust(3);report.text="Κλειδώνετε "+n+" σε ξεχωριστό δωμάτιο με νερό και ασύρματο. Η μοίρα του/της παραμένει άγνωστη. Η απόφαση θα επιστρέψει αργότερα.";}
+    if(id==="isolate"){s.flags.bite="isolated";s.status[n]="missing";trust(n,-15);allTrust(3);report.text="Κλειδώνετε "+n+" σε ξεχωριστό δωμάτιο με νερό και ασύρματο. Η μοίρα "+genderWord(n,"του","της")+" παραμένει άγνωστη. Η απόφαση θα επιστρέψει αργότερα.";}
     else if(id==="amputate"){
       s.resources.meds=Math.max(0,s.resources.meds-1);s.flags.bite="amputation";
       if(chance(.38+.09*s.resources.meds)){s.status[n]="wounded";trust(n,20);allTrust(6);report.text="Η επέμβαση είναι τρομακτική, αλλά "+n+" επιβιώνει. Δεν ξέρετε ακόμη αν η μόλυνση σταμάτησε. Ο πόνος, πάντως, είναι αληθινός.";}
@@ -337,7 +337,7 @@ function sceneEffect(id){
     const a=s.rescueTargets[0],b=s.rescueTargets[1];
     const rescueP=Math.max(.12,Math.min(.88,.38+s.resources.security*.08+s.resources.meds*.045-s.danger*.045));
     if(id==="both"){
-      if(chance(rescueP)){trust(a,23);trust(b,23);s.flags.savedBoth=true;report.text="Τρέχετε στο πιο επικίνδυνο σημείο της γέφυρας. Την τελευταία στιγμή τραβάτε και τους δύο στο ασφαλές έδαφος. "+a+" και "+b+" είναι ζωντανοί.";if(chance(.28)){let third=pick(others().filter(function(n){return n!==a&&n!==b;}));if(third){kill(third,"Χάθηκε ενώ κάλυπτε τη διάσωση δύο άλλων επιζώντων.");report.warning=true;report.heading="ΜΙΑ ΔΙΑΣΩΣΗ. ΜΙΑ ΑΠΩΛΕΙΑ.";report.text+=" Όμως ο/η "+third+" έμεινε πίσω για να καλύψει τη διαφυγή. Δεν επέστρεψε ποτέ.";}}}
+      if(chance(rescueP)){trust(a,23);trust(b,23);s.flags.savedBoth=true;report.text="Τρέχετε στο πιο επικίνδυνο σημείο της γέφυρας. Την τελευταία στιγμή τραβάτε και τους δύο στο ασφαλές έδαφος. "+a+" και "+b+" είναι ζωντανοί.";if(chance(.28)){let third=pick(others().filter(function(n){return n!==a&&n!==b;}));if(third){kill(third,"Χάθηκε ενώ κάλυπτε τη διάσωση δύο άλλων επιζώντων.");report.warning=true;report.heading="ΜΙΑ ΔΙΑΣΩΣΗ. ΜΙΑ ΑΠΩΛΕΙΑ.";report.text+=" Όμως "+subjectName(third,true)+" έμεινε πίσω για να καλύψει τη διαφυγή. Δεν επέστρεψε ποτέ.";}}}
       else {let lost=pick([a,b]);kill(lost,"Χάθηκε όταν απέτυχε η διάσωση δύο ατόμων.");trust(lost===a?b:a,8);report.warning=true;report.heading="ΑΝΑΚΟΙΝΩΣΗ ΘΑΝΑΤΟΥ";report.text="Το σχοινί σπάει. Προλαβαίνετε να τραβήξετε μόνο "+(lost===a?b:a)+". "+lost+" εξαφανίζεται στο χάος της γέφυρας. Η απόφαση να σώσετε και τους δύο δεν αρκούσε.";}
     }else if(id==="first"||id==="second"){let saved=id==="first"?a:b;let lost=id==="first"?b:a;trust(saved,25);if(chance(.76+s.resources.security*.03)){kill(lost,"Δεν σώθηκε στη γέφυρα.");report.warning=true;report.heading="ΑΝΑΚΟΙΝΩΣΗ ΘΑΝΑΤΟΥ";report.text="Σώζεις "+saved+". "+lost+" απλώνει το χέρι για τελευταία φορά πριν χαθεί μέσα στο πλήθος. Η ομάδα δεν θα ξεχάσει ποιον επέλεξες.";}else{s.status[lost]="missing";report.text="Σώζεις "+saved+". "+lost+" χάνεται πίσω από τον καπνό. Κανείς δεν ξέρει αν ζει.";}s.flags.rescued=saved;}
     else {s.status[a]="missing";s.status[b]="missing";allTrust(-13);s.flags.rescued="none";report.warning=true;report.heading="ΚΑΝΕΙΣ ΔΕΝ ΓΥΡΙΣΕ ΠΙΣΩ";report.text="Η ομάδα υποχωρεί. Οι φωνές των "+a+" και "+b+" χάνονται. Δεν βρέθηκαν σώματα — μόνο ένα άδειο πέρασμα και δύο ονόματα που κανείς δεν τολμά να πει.";}
@@ -406,7 +406,7 @@ function renderIntro(){
   app.innerHTML='<div class="intro-screen"><div class="intro-copy"><div class="eyebrow">SPIRIT UNIVERSE PRESENTS / SEASON 01</div>'+
     '<h1>EVERYTHING<br/><span>WAS NORMAL.</span><br/>UNTIL IT WASN’T.</h1>'+
     '<p>Η αυλαία ανοίγει σαν πραγματική σειρά: κινηματογραφικές εικόνες, προσωπικά credits του cast, πρωτότυπη σκοτεινή μουσική και ένα τελικό title reveal. Μετά ξεκινά η πρώτη σου απόφαση.</p>'+
-    '<blockquote>Ξυπνάς μόνος. Οι δρόμοι είναι άδειοι. Κανείς δεν σου έχει υποσχεθεί ότι θα έρθει να σε βρει.</blockquote>'+ 
+    '<blockquote>"+(s.players.length===1?"Ξυπνάς "+genderWord(lead,"μόνος","μόνη"):"Ξυπνάτε μαζί")+". Οι δρόμοι είναι άδειοι. Κανείς δεν σου έχει υποσχεθεί ότι θα έρθει να σε βρει.</blockquote>'+ 
     '<button class="btn primary" data-action="enter">▶ PLAY CINEMATIC OPENING</button><p class="tiny" style="margin-top:13px">~44 ΔΕΥΤΕΡΟΛΕΠΤΑ · ORIGINAL MUSIC · SKIP AVAILABLE</p></div>'+
     '<div class="intro-photo">'+image(lead)+'<div class="intro-photo-label"><small>THE STORY OF</small><strong>'+lead+'</strong><small>DAY 00 — 08:17 AM</small></div></div></div>';
 }

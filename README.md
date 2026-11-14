@@ -30,5 +30,6 @@ python -m http.server 4173 --directory dist
 - Imported and automatic saves share schema/content validation. Failed storage writes report an error.
 - Starting character selection preserves the previous autosave until a new game starts.
 - Exiling the accused after the scripted betrayal targets the recorded suspect when present.
+- Canonical character genders and Greek grammatical helpers copied from Spirit Slasher v1.26.0; all 26 cast cards display the corresponding she/her or he/him pronouns. Named dialogue and outcome text use the same metadata.
 
 The large requirements document also describes further story expansion, separate-player starts, and a persistent shelter simulation. Those are future design work; this update audits and repairs the existing engine and does not claim to implement that entire document.

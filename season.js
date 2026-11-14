@@ -118,7 +118,7 @@ function scenarioScene(){
   const voice=others().length?knownVoice():"ΕΣΩΤΕΡΙΚΗ ΦΩΝΗ";
   let context=ev.body;
   if(ev.kind==="bond"&&others().length===0)context+=" Δεν υπάρχει ακόμη κανείς δίπλα σου, μόνο παλιά μηνύματα και αναμνήσεις.";
-  if(ev.kind==="betray"&&others().length)context+=" Μέσα στην ομάδα οι ματιές γίνονται βαριές· ο/η "+voice+" δεν μπορεί να απομακρύνει την καχυποψία.";
+  if(ev.kind==="betray"&&others().length)context+=" Μέσα στην ομάδα οι ματιές γίνονται βαριές· "+subjectName(voice,true)+" δεν μπορεί να απομακρύνει την καχυποψία.";
   return {
     text:["<strong>"+ev.title+"</strong>. "+context,
       "Κάθε δευτερόλεπτο είναι επιλογή. Ό,τι συμβεί εδώ θα συνεχίσει να επηρεάζει την πορεία προς την τελευταία ημέρα."],
@@ -235,7 +235,7 @@ function scenarioOrBeat(){
   if(s.episode>1)return beatScene();
   if(s.step===1&&others().length===0){
     const sc=originalScene();
-    sc.text=["Στον παλιό σταθμό τραμ καταφέρνεις να φτάσεις μόνος. Πίσω από την περίφραξη βλέπεις ανθρώπους να προσπαθούν να βρουν έξοδο.",
+    sc.text=[""+(s.players.length===1?"Στον παλιό σταθμό τραμ καταφέρνεις να φτάσεις "+genderWord(s.players[0],"μόνος","μόνη"):"Στον παλιό σταθμό τραμ καταφέρνετε να φτάσετε μαζί")+". Πίσω από την περίφραξη βλέπεις ανθρώπους να προσπαθούν να βρουν έξοδο.",
       "Από τα διπλανά στενά ακούγεται κραυγή. Μπορείς να βοηθήσεις τους αγνώστους, να οργανώσεις μια ασφαλή γωνιά ή να φύγεις πριν σε περικυκλώσουν.",
       "Δεν υπάρχει ακόμη ομάδα. Αυτό που θα κάνεις τώρα μπορεί να είναι η αρχή της."];
     sc.dialogue={who:"ΑΓΝΩΣΤΟΣ ΠΙΣΩ ΑΠΟ ΤΗΝ ΠΕΡΙΦΡΑΞΗ",text:"Σε παρακαλώ! Έχεις κλειδί; Είμαστε ακόμη ζωντανοί!"};
@@ -250,11 +250,11 @@ function scenarioOrBeat(){
         {id:"soloLeave",name:"Φύγε από το κέντρο υγείας",hint:"Δεν θέτεις τον εαυτό σου σε κίνδυνο."}]};
   }
   if(s.step===5&&others().length===0){
-    return {text:["Μένεις για λίγο μόνος, ακούγοντας τα παράσιτα μιας παλιάς συσκευής. Στον τοίχο γράφει: <strong>ΑΝ ΔΙΑΒΑΖΕΙΣ ΑΥΤΟ, ΕΙΜΑΙ ΑΚΟΜΗ ΕΔΩ.</strong>",
+    return {text:["Μένεις για λίγο "+genderWord(s.players[0],"μόνος","μόνη")+", ακούγοντας τα παράσιτα μιας παλιάς συσκευής. Στον τοίχο γράφει: <strong>ΑΝ ΔΙΑΒΑΖΕΙΣ ΑΥΤΟ, ΕΙΜΑΙ ΑΚΟΜΗ ΕΔΩ.</strong>",
       "Δεν υπάρχει κάποιος κοντά σου να μοιραστεί τον φόβο. Μπορείς όμως να αποφασίσεις πώς θα συνεχίσεις."],
       dialogue:{who:"ΗΧΟΓΡΑΦΗΜΕΝΟ ΜΗΝΥΜΑ",text:"Αν κάποιος το βρει... πείτε τους ότι δεν τα παράτησα."},
       choices:[{id:"suppliesCheck",name:"Έλεγξε το κρυφό ντουλάπι",hint:"Μπορεί να βρεις προμήθειες."},
-        {id:"watch",name:"Ανάλαβε μόνος σου τη σκοπιά",hint:"Προετοιμάσου για τις επόμενες ώρες."}]};
+        {id:"watch",name:"Ανάλαβε τη σκοπιά",hint:"Προετοιμάσου για τις επόμενες ώρες."}]};
   }
   if(s.step===7&&s.rescueTargets.length<2){
     const known=others();
@@ -306,9 +306,9 @@ function applyBeatAction(effect,choice){
   else if(effect==="supply"){s.resources.food+=2;s.resources.meds+=chance(.4)?1:0;s.danger++;text="Επιστρέφεις με χρήσιμες προμήθειες και μια μικρή αίσθηση νίκης. Οι ήχοι πίσω σου δεν θυμίζουν νικητές."+lethalRisk(.10,"Σκοτώθηκε κατά την αναζήτηση προμηθειών.");}
   else if(effect==="heal"){
     const target=pick(others());s.resources.meds--;const success=chance(.42+s.resources.meds*.08+(s.flags.evidence||0)*.012);
-    if(target&&success){s.status[target]="wounded";trust(target,17);text="Ξοδεύεις το τελευταίο αποστειρωμένο υλικό. "+target+" κρατιέται στη ζωή και θυμάται ότι δεν τον/την εγκατέλειψες.";}
+    if(target&&success){s.status[target]="wounded";trust(target,17);text="Ξοδεύεις το τελευταίο αποστειρωμένο υλικό. "+target+" κρατιέται στη ζωή και θυμάται ότι δεν "+genderWord(target,"τον","την")+" εγκατέλειψες.";}
     else if(target&&s.resources.meds<0){s.resources.meds=0;text="Χωρίς αρκετά φάρμακα η θεραπεία αποτυγχάνει. "+target+" παραμένει σε κρίσιμη κατάσταση.";s.status[target]="wounded";}
-    else if(target&&!success&&chance(.30)){kill(target,"Η μόλυνση εξαπλώθηκε παρά τη θεραπεία.");text="Η προσπάθεια δεν αρκεί. "+target+" πεθαίνει ενώ κάποιος κρατά το χέρι του/της.";}
+    else if(target&&!success&&chance(.30)){kill(target,"Η μόλυνση εξαπλώθηκε παρά τη θεραπεία.");text="Η προσπάθεια δεν αρκεί. "+target+" πεθαίνει ενώ κάποιος κρατά το χέρι "+genderWord(target,"του","της")+".";}
     else {text="Ο τραυματίας αντέχει το πρώτο βράδυ. Χωρίς εξετάσεις δεν μπορεί κανείς να υποσχεθεί την επόμενη.";}
   }else if(effect==="isolate"){
     const target=pick(others());
@@ -326,17 +326,17 @@ function applyBeatAction(effect,choice){
   else if(effect==="accuse"){
     const suspect=victim();if(suspect){trust(suspect,-32);s.flags.accused=(s.flags.accused||[]).concat([suspect]);text="Η κατηγορία πέφτει πάνω σε "+suspect+" σαν πέτρα. «Όταν φανεί ότι είμαι αθώος/α, θέλω να θυμάσαι αυτή τη στιγμή», απαντά.";}else{text="Κατηγορείς άγνωστο πρόσωπο χωρίς απόδειξη. Οι φήμες εξαπλώνονται.";}
   }else if(effect==="exile"){
-    const n=(ep===3&&step===3&&inGroup().includes(s.flags.betrayalKiller))?s.flags.betrayalKiller:victim();if(n){s.status[n]="missing";trust(n,-45);s.flags.exiled=(s.flags.exiled||[]).concat([n]);text="Ο/Η "+n+" διώχνεται. Φεύγει λέγοντας ότι, αν επιβιώσει, θα θυμάται τη νύχτα που τον/την αφήσατε έξω.";}else{text="Απομακρύνεις τον ύποπτο, αλλά κανείς δεν φαίνεται ήρεμος.";}
+    const n=(ep===3&&step===3&&inGroup().includes(s.flags.betrayalKiller))?s.flags.betrayalKiller:victim();if(n){s.status[n]="missing";trust(n,-45);s.flags.exiled=(s.flags.exiled||[]).concat([n]);text=subjectName(n)+" διώχνεται. Φεύγει λέγοντας ότι, αν επιβιώσει, θα θυμάται τη νύχτα που "+genderWord(n,"τον","την")+" αφήσατε έξω.";}else{text="Απομακρύνεις τον ύποπτο, αλλά κανείς δεν φαίνεται ήρεμος.";}
   }else if(effect==="reunite"){
     const n=pick(missing());
-    if(n&&chance(.60+(s.flags.evidence||0)*.015)){s.status[n]="group";trust(n,18);text="Η φιγούρα πλησιάζει και αναγνωρίζεις "+n+". Είναι ζωντανός/ή! Τα πρόσωπα αλλάζουν, καθώς ένα απίθανο αντάμωμα γίνεται αληθινό."+relationshipEncounter(n);}
-    else if(n){text="Ακολουθείς το ίχνος, αλλά δεν καταφέρνεις να συναντήσεις "+n+". Μένει αγνοούμενος/η.";}
+    if(n&&chance(.60+(s.flags.evidence||0)*.015)){s.status[n]="group";trust(n,18);text="Η φιγούρα πλησιάζει και αναγνωρίζεις "+n+". Είναι "+genderWord(n,"ζωντανός","ζωντανή")+"! Τα πρόσωπα αλλάζουν, καθώς ένα απίθανο αντάμωμα γίνεται αληθινό."+relationshipEncounter(n);}
+    else if(n){text="Ακολουθείς το ίχνος, αλλά δεν καταφέρνεις να συναντήσεις "+n+". Μένει "+genderWord(n,"αγνοούμενος","αγνοούμενη")+".";}
     else {const r=recruitCandidate();text="Δεν επιστρέφει κανένας από τους χαμένους. Αντί γι' αυτό, "+r.message;}
   }else if(effect==="risk"){
     s.flags.heroicRisk=(s.flags.heroicRisk||0)+1;allTrust(16);s.danger+=2;text="Επιλέγεις να μπεις εσύ στη ζώνη κινδύνου. Όσοι σε βλέπουν καταλαβαίνουν ότι δεν μοιράζεις μόνο εντολές."+lethalRisk(.14,"Σκοτώθηκε καλύπτοντας επικίνδυνη επιχείρηση.");}
   else if(effect==="sacrifice"){
     const n=victim();if(n){if(chance(.34)){kill(n,"Θυσιάστηκε για να περάσει η ομάδα.");text=n+" κρατά τη θέση μέχρι την τελευταία στιγμή. Ο μηχανισμός ανοίγει, αλλά δεν επιστρέφει.";}
-      else{s.status[n]="wounded";text=n+" καταφέρνει να επιστρέψει τραυματισμένος/η. Η ομάδα δεν θα ξεχάσει την πράξη.";}allTrust(-5);}
+      else{s.status[n]="wounded";text=n+" καταφέρνει να επιστρέψει "+genderWord(n,"τραυματισμένος","τραυματισμένη")+". Η ομάδα δεν θα ξεχάσει την πράξη.";}allTrust(-5);}
     else {s.danger+=2;text="Δεν υπάρχει κανένας άλλος να σταθεί στη θέση σου. Αναγκάζεσαι να εγκαταλείψεις το σχέδιο.";}
   }else if(effect==="pair"){
     const group=others();
@@ -347,12 +347,12 @@ function applyBeatAction(effect,choice){
       const success=chance(.30+s.resources.security*.08+s.resources.meds*.05-s.danger*.02);
       if(success){addAlly(a);addAlly(b);trust(a,18);trust(b,18);text="Με απίστευτη προσπάθεια τραβάς και τους δύο σε ασφαλές σημείο. "+a+" και "+b+" επιβιώνουν."+lethalRisk(.28,"Πέθανε καλύπτοντας τη διάσωση δύο ανθρώπων.");}
       else {let lost=pick([a,b]),safe=lost===a?b:a;kill(lost,"Χάθηκε ενώ επιχειρούσαν να σώσουν δύο ανθρώπους.");addAlly(safe);text="Το πέρασμα υποχωρεί. "+safe+" σώζεται, αλλά "+lost+" χάνεται μέσα στο νερό.";}
-    }else if(id==="first"||id==="second"){const safe=id==="first"?a:b,lost=id==="first"?b:a;addAlly(safe);if(chance(.65))kill(lost,"Χάθηκε στη διάσωση της γέφυρας.");else s.status[lost]="missing";text="Σώζεις "+safe+". "+lost+" μένει στην άλλη πλευρά και η μοίρα του/της είναι αβέβαιη.";}
+    }else if(id==="first"||id==="second"){const safe=id==="first"?a:b,lost=id==="first"?b:a;addAlly(safe);if(chance(.65))kill(lost,"Χάθηκε στη διάσωση της γέφυρας.");else s.status[lost]="missing";text="Σώζεις "+safe+". "+lost+" μένει στην άλλη πλευρά και η μοίρα "+genderWord(lost,"του","της")+" είναι αβέβαιη.";}
     else {s.status[a]="missing";s.status[b]="missing";allTrust(-8);text="Απομακρύνεσαι από τη γέφυρα. Οι φωνές σταματούν και τα ονόματα "+a+", "+b+" γίνονται άλλη μια αναπάντητη ερώτηση.";}
   }
   else if(effect.startsWith("final_"))return finalEffect(effect);
   if(ep===3&&step===3&&s.flags.betrayalVictim){
-    if(choice.id==="arrest")text+=" Ο κατηγορούμενος εξαφανίζεται από την ομάδα. Ίσως ξανασυναντηθείτε.";
+    if(choice.id==="arrest")text+=" Το πρόσωπο που κατηγορείται εξαφανίζεται από την ομάδα. Ίσως ξανασυναντηθείτε.";
     if(choice.id==="court"&&(s.flags.evidence||0)>2)text+=" Οι μαρτυρίες αποδεικνύουν ότι η πρώτη κατηγορία ήταν λανθασμένη.";
     s.flags.betrayalJudgment=choice.id;
   }
@@ -370,7 +370,7 @@ function finalEffect(effect){
   let personalDeath=.25;
   if(effect==="final_sacrifice"){personalDeath=.74-preparation*.30;allTrust(20);result.text="Μένεις στο μηχανισμό μέχρι να περάσουν οι άλλοι. Για λίγα δευτερόλεπτα, το δικό σου σώμα είναι το τελευταίο εμπόδιο στους νεκρούς.";}
   if(effect==="final_together"){personalDeath=.36-preparation*.50;allTrust(12);result.text="Δίνεις το σύνθημα και ορμάτε όλοι μαζί προς το πέρασμα. Η εμπιστοσύνη που χτίσατε είναι το μόνο που δεν μπορείτε να κουβαλήσετε στο σακίδιο.";}
-  if(effect==="final_escape"){personalDeath=.12-preparation*.14;allTrust(-23);result.text="Τρέχεις πρώτος/η και φτάνεις στην απέναντι πλευρά. Πίσω σου ακούγονται φωνές. Δεν ξέρεις ποιος θα μπορέσει να σε ακολουθήσει."+lethalRisk(.48,"Έμεινε πίσω στην τελική απόδραση.");}
+  if(effect==="final_escape"){personalDeath=.12-preparation*.14;allTrust(-23);result.text="Τρέχεις μπροστά και φτάνεις στην απέναντι πλευρά. Πίσω σου ακούγονται φωνές. Δεν ξέρεις ποιος θα μπορέσει να σε ακολουθήσει."+lethalRisk(.48,"Έμεινε πίσω στην τελική απόδραση.");}
   if(effect==="final_trap"){personalDeath=.48-preparation*.42;s.resources.security=Math.max(0,s.resources.security-1);result.text="Ενεργοποιείς τον μηχανισμό παγίδευσης. Οι εκρήξεις φωτίζουν το πρόσωπό σου και η πόρτα αρχίζει να κατεβαίνει."+lethalRisk(.18,"Χάθηκε κατά την τελική παγίδα.");}
   s.flags.finalChoice=effect;
   s.flags.finalRoll=personalDeath;
@@ -383,10 +383,10 @@ function finalEffect(effect){
     s.flags.playerDied=lead;
     result.heading="THE END OF "+lead.toUpperCase();
     result.warning=true;
-    result.text+=" <strong>Ο/Η "+lead+" δεν τα κατάφερε.</strong> Η ιστορία συνεχίζεται μέσα από όσα άφησε πίσω του/της.";
+    result.text+=" <strong>"+subjectName(lead)+" δεν τα κατάφερε.</strong> Η ιστορία συνεχίζεται μέσα από όσα άφησε πίσω "+genderWord(lead,"του","της")+".";
   }else{
     s.flags.playerSurvived=true;
-    result.text+=" <strong>Το πρώτο φως πέφτει πάνω σου. Είσαι ζωντανός/ή.</strong> Η ιστορία σου συνεχίζεται πέρα από τη Γραμμή.";
+    result.text+=" <strong>Το πρώτο φως πέφτει πάνω σου. Είσαι "+genderWord(s.players[0],"ζωντανός","ζωντανή")+".</strong> Η ιστορία σου συνεχίζεται πέρα από τη Γραμμή.";
   }
   clampGame();
   return result;
@@ -407,7 +407,7 @@ sceneEffect = function(id){
     if(s.step===0&&id==="call"){
       // Contact does not expose identities until the player actually meets someone.
       s.flags.calledButNotMet=true;
-      report.text="Η κλήση χτυπά χωρίς απάντηση. Αφήνεις ένα μήνυμα: «Είμαι ζωντανός/ή. Αν μ' ακούς, βρες με». Κανένα όνομα δεν επιβεβαιώνεται ακόμη.";
+      report.text="Η κλήση χτυπά χωρίς απάντηση. Αφήνεις ένα μήνυμα: «Είμαι "+genderWord(s.players[0],"ζωντανός","ζωντανή")+". Αν μ' ακούς, βρες με». Κανένα όνομα δεν επιβεβαιώνεται ακόμη.";
     }
     if(s.step===1&&id==="strangers"){
       const recent=others().slice(-2);
@@ -442,7 +442,7 @@ function enterEpisodeBeat(){
     const saved=s.flags.rescued||s.flags.firstRescue;
     const candidate=saved&&inGroup().includes(saved)?saved:null;
     if(candidate&&chance(.55)){
-      kill(candidate,"Δολοφονήθηκε από άλλον επιζώντα τρεις εβδομάδες μετά τη διάσωσή του/της.");
+      kill(candidate,"Δολοφονήθηκε από άλλον επιζώντα τρεις εβδομάδες μετά τη διάσωσή "+genderWord(candidate,"του","της")+".");
       s.flags.betrayalVictim=candidate;
       s.flags.betrayalKiller=pick(others().filter(function(n){return n!==candidate;}))||"άγνωστος";
       save();
@@ -560,7 +560,7 @@ renderSetup = function(){
   originalRenderSetup();
   const p=app.querySelector(".setup-head p");
   if(p)p.textContent="Διάλεξε 1–3 χαρακτήρες από το αυθεντικό cast. Οι προσωπικές τους σχέσεις δεν αποκαλύπτονται πριν συναντηθούν μέσα στην ιστορία.";
-  app.querySelectorAll(".cast-info span").forEach(function(x){x.textContent="SURVIVOR";});
+  app.querySelectorAll(".cast-info span").forEach(function(x,i){x.textContent=ROSTER[i].pronouns.label.toUpperCase();});
   const footer=app.querySelector(".setup-bottom p");
   if(footer)footer.textContent="Το playthrough αρχίζει χωρίς έτοιμη ομάδα. Οι άνθρωποι μπαίνουν στην ιστορία μέσα από γεγονότα και τις αποφάσεις σας.";
 };
@@ -644,7 +644,7 @@ function playDeath(){
   stopAmbient();
   const layer=document.createElement("section");
   layer.id="death-cinema";layer.className="death-cinema";layer.setAttribute("role","dialog");
-  layer.setAttribute("aria-label","Κινηματογραφική σκηνή θανάτου του/της "+name);
+  layer.setAttribute("aria-label","Κινηματογραφική σκηνή θανάτου "+genitiveName(name));
   layer.innerHTML='<div class="death-flash"></div><div class="death-portrait">'+image(name)+'</div>'+
     '<div class="death-ink"></div><div class="death-caption"><span>THE SPIRIT APOCALYPSE · IN MEMORIAM</span>'+
     '<strong>'+html(name)+'</strong><div class="death-line"></div><p>ΕΝΑΣ ΑΚΟΜΗ ΑΝΘΡΩΠΟΣ ΧΑΘΗΚΕ.</p>'+
