@@ -1,1 +1,1 @@
-const APP_RELEASE = {"version": "1.2.0", "build": "be236f8c1da2", "name": "The Spirit Apocalypse"};
+const APP_RELEASE = {"version": "1.3.0", "build": "5698e74a6a09", "name": "The Spirit Apocalypse"};

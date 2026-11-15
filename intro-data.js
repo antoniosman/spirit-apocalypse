@@ -30,15 +30,21 @@ const SpiritIntro = (function(){
   function plan(state,episode=state.episode||1,duration=DURATION){
     const cast=snapshot(state,episode),end=Math.min(END,duration),total=(end-START)*1000;
     if(!Number.isFinite(total)||total<24000)throw Error('Intro audio is too short');
-    const scenic=['assets/cinematic/city-dawn.webp','assets/cinematic/clinic-dusk.webp','assets/cinematic/forest-road.webp'];
+    const library=['railway-platform.webp','flooded-underpass.webp','radio-tower.webp','city-dawn.webp','clinic-dusk.webp','forest-road.webp'];
+    // Rotate the establishing shots per episode without consuming the game's RNG.
+    const offset=(episode-1)%library.length;
+    const scenic=library.map((_,i)=>'assets/cinematic/'+library[(i+offset)%library.length]);
     const shots=[{type:'presents',ms:3500},{type:'landscape',ms:3500,image:scenic[0],super:'',line:''},{type:'landscape',ms:4000,image:scenic[1],super:'',line:''}];
     cast.players.forEach((name,i)=>shots.push({type:'cast',ms:3000,name,castIndex:i,credit:'STARRING',relation:''}));
-    const supporting=cast.actors.filter(n=>!cast.players.includes(n)),batches=[];
-    for(let i=0;i<supporting.length;i+=6)batches.push(supporting.slice(i,i+6));
+    const supporting=cast.actors.filter(n=>!cast.players.includes(n));
     const tail=8300,used=shots.reduce((n,shot)=>n+shot.ms,0),available=total-used-tail;
-    if(batches.length){const frame=Math.min(3600,available/batches.length);batches.forEach((names,i)=>shots.push({type:'cast-group',ms:frame,names,castIndex:i}));}
+    if(supporting.length){
+      // One portrait per shot, even for a full cast. Music stays 0:54–1:30.
+      const frame=Math.min(3000,available/supporting.length);
+      supporting.forEach((name,i)=>shots.push({type:'cast',ms:frame,name,castIndex:cast.players.length+i,credit:'STARRING',relation:''}));
+    }
     const padding=total-shots.reduce((n,shot)=>n+shot.ms,0)-tail;
-    if(padding>0){const count=Math.max(1,Math.ceil(padding/4200));for(let i=0;i<count;i++)shots.push({type:'landscape',ms:padding/count,image:scenic[i%scenic.length],super:'',line:''});}
+    if(padding>.001){const count=Math.max(1,Math.ceil(padding/4200));for(let i=0;i<count;i++)shots.push({type:'landscape',ms:padding/count,image:scenic[i+2],super:'',line:''});}
     shots.push({type:'logo',ms:6500},{type:'episode',ms:1800,episode});
     let cursor=0;shots.forEach(shot=>{shot.at=cursor;cursor+=shot.ms;});
     return {episode,audio:AUDIO,start:START,end,duration,total,firstCredit:FIRST_CREDIT,cast,shots};

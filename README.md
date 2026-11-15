@@ -1,4 +1,4 @@
-# The Spirit Apocalypse — 1.2.0
+# The Spirit Apocalypse — 1.3.0
 
 [Play](https://antoniosman.github.io/spirit-apocalypse/)
 
@@ -14,7 +14,7 @@ Autosave, three manual slots and JSON export/import are available. Previous vers
 
 ## Episode intros
 
-The opening plays the supplied intro music from 0:54 to 1:30. The first player appears at 1:05; the other selected players follow in order. NPCs recruited into groups enter the credits from the next episode. All eligible characters fit in the opening, followed by the existing title reveal.
+The opening plays the supplied intro music from 0:54 to 1:30. The first player appears at 1:05; the other selected players follow in order. NPCs recruited into groups enter the credits from the next episode, each with the same solo portrait framing as the players. NPC credit duration adapts to fit everyone within 36 seconds, followed by the existing title reveal. Six establishing images rotate by episode without repeating an establishing image in one opening.
 
 Use ▶ INTRO in the header or in a manual save slot, then select an episode. Replay leaves the current story, choices and save untouched. New episodes record their opening cast so later events cannot alter past intros. Older saves without recorded opening credits show the selected protagonists and explain the missing history.
 
@@ -32,12 +32,13 @@ No dependency installation is needed. Use Node 22+ and Python 3:
 node tests/engine.cjs
 node tests/campaign.cjs
 node tests/intro.cjs
+node tests/view.cjs
 python scripts/prepare-release.py --dist
 python -m http.server 4173 --directory dist
 ```
 
-The preparation script fingerprints assets and generates `release.js`, `version.json`, `sw.js` and `dist`. GitHub Actions runs all three test suites and publishes `dist` on pushes to `main`.
+The preparation script fingerprints assets and generates `release.js`, `version.json`, `sw.js` and `dist`. GitHub Actions runs all four test suites and publishes `dist` on pushes to `main`.
 
 `campaign.js` owns version-2 state and deterministic outcomes; `campaign-ui.js` renders it. The original `app.js` / `season.js` engine remains for legacy saves. `campaign-validation.js` checks identity links, voting and scene caches; the shared save dialog handles both formats.
 
-See `CHANGELOG_1_2.md`, `QA_1_2.md`, `CHANGELOG_1_1.md`, `QA_1_1.md`, `ICON_PROMPT.md` and `ASSET_NOTES.md`. This remains a beta narrative game; automated tests do not certify every possible story combination or replace tests on physical phones.
+See `CHANGELOG_1_3.md`, `QA_1_3.md`, previous changelogs and QA notes, `ICON_PROMPT.md` and `ASSET_NOTES.md`. This remains a beta narrative game; automated tests do not certify every possible story combination or replace tests on physical phones.

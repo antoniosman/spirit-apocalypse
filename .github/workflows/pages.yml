@@ -27,6 +27,8 @@ jobs:
         run: node tests/campaign.cjs
       - name: Check episode intro timing and history
         run: node tests/intro.cjs
+      - name: Check relationships and selected base presentation
+        run: node tests/view.cjs
       - name: Prepare version and offline assets
         run: python3 scripts/prepare-release.py --dist
       - uses: actions/configure-pages@v5

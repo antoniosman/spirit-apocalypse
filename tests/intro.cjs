@@ -28,10 +28,18 @@ next(s);assert(I.snapshot(s,3).actors.includes('Demarin'));assert(!I.snapshot(s,
 assert(valid(s));const before=json(s);for(let episode=1;episode<=3;episode++){I.plan(s,episode);I.snapshot(s,episode);}assert.equal(json(s),before,'replay preparation is read-only');
 const restored=clone(s);assert.equal(json(I.snapshot(restored,2)),ep2);assert(valid(restored));
 const max=C.create(['Billy','Tony','Alex'],'together',2),mg=C.groups(max)[0];for(const name of names.filter(n=>!max.players.includes(n)))C.recruit(max,mg,name);next(max);
-const plan=I.plan(max),groups=plan.shots.filter(shot=>shot.type==='cast-group');
-assert.equal(plan.cast.actors.length,26);assert.equal(groups.flatMap(shot=>shot.names).length,23,'every recruited NPC gets a credit');
-assert(groups.every(shot=>shot.names.length<=6&&shot.ms>=1800));assert.equal(plan.total,36000);
+const plan=I.plan(max),credits=plan.shots.filter(shot=>shot.type==='cast');
+assert.equal(plan.cast.actors.length,26);assert.deepEqual(clone(credits.map(shot=>shot.name)),clone(plan.cast.actors),'every actor gets an individual portrait shot');
+assert(credits.every(shot=>shot.ms>300));assert(!plan.shots.some(shot=>shot.type==='cast-group'));assert.equal(plan.total,36000);
 assert.equal(plan.shots.reduce((sum,shot)=>sum+shot.ms,0),36000);
+const openings=[];
+for(let episode=1;episode<=6;episode++){
+ const fixture=clone(max);fixture.episode=episode;delete fixture.introSnapshots;I.capture(fixture);
+ const shots=I.plan(fixture,episode).shots.filter(shot=>shot.type==='landscape'),images=shots.map(shot=>shot.image);
+ assert.equal(new Set(images).size,images.length,'no repeated establishing image in an episode');
+ openings.push(images[0]);assert(shots.every(shot=>fs.existsSync(path.join(root,shot.image))),'every scenic asset exists');
+}
+assert.equal(new Set(openings).size,6,'each episode starts on a different establishing scene');
 const legacy=clone(s);delete legacy.introSnapshots;const old=json(legacy);assert.deepEqual(clone(I.snapshot(legacy,2).actors),legacy.players);assert.equal(I.snapshot(legacy,2).historical,false);assert.equal(json(legacy),old);
 for(const mutate of [v=>v.introSnapshots[9]=v.introSnapshots[1],v=>v.introSnapshots[1].actors.push('Unknown'),v=>v.introSnapshots[2].actors.push('Rino'),v=>v.introSnapshots[1].actors.push('Rino')]){const broken=clone(s);mutate(broken);assert.equal(I.validSnapshots(broken),false);assert.equal(valid(broken),false);}
 console.log('PASS: intro source 0:54–1:30, first player at 1:05, ordered 1–3 players, all 26 credits, next-episode recruitment, immutable replay and validated save history.');

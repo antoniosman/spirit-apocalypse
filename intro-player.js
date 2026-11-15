@@ -4,12 +4,14 @@
   const oldStop=stopOpening,oldShot=renderOpeningShot;
   const escape=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function paint(shot){
-    if(shot.type==='cast-group'){
-      const viewport=document.querySelector('#cinema-viewport');
-      viewport.innerHTML='<div class="intro-shot cinema-support"><div class="cinema-support-grid" data-count="'+shot.names.length+'">'+shot.names.map(name=>'<div class="cinema-support-person">'+image(name)+'<span>STARRING</span><h2>'+escape(name)+'</h2></div>').join('')+'</div></div>';
-    }else if(shot.type==='episode'){
+    if(shot.type==='episode'){
       document.querySelector('#cinema-viewport').innerHTML='<div class="intro-shot cinema-episode-card"><div class="cinema-episode-bg"></div><span>SEASON ONE</span><strong></strong><h2></h2><p></p><div class="cinema-start-signal">YOUR STORY BEGINS NOW ···</div></div>';
     }else oldShot(shot);
+    if(shot.type==='cast'){
+      const node=document.querySelector('.cinema-cast');
+      node.classList.add('cinema-solo-credit');
+      node.style.setProperty('--credit-duration',shot.ms+'ms');
+    }
     if(shot.type==='episode'){
       const card=document.querySelector('.cinema-episode-card');
       card.querySelector('strong').textContent='EPISODE '+String(opening.episode).padStart(2,'0');
@@ -50,6 +52,8 @@
     begin.onclick=()=>{if(audio.error)audio.load();requestPlay();};
     overlay.addEventListener('click',e=>{const button=e.target.closest('[data-cinema]');if(!button)return;if(button.dataset.cinema==='skip')stopOpening(true);if(button.dataset.cinema==='sound'){soundtrackEnabled=!soundtrackEnabled;safeSet('spirit-apocalypse-sound',soundtrackEnabled?'on':'off');audio.muted=!soundtrackEnabled;button.textContent=soundtrackEnabled?'♫ SOUND ON':'♫ SOUND OFF';const header=document.querySelector('#game-sound');if(header)header.textContent=soundtrackEnabled?'♫ ON':'♫ OFF';}});
     function tick(){if(opening!==current)return;if(audio.currentTime>=current.plan.end){stopOpening(true);return;}const elapsed=Math.max(0,(audio.currentTime-SpiritIntro.START)*1000),index=SpiritIntro.shotAt(current.plan,elapsed);if(index!==current.shown){current.shown=index;paint(current.plan.shots[index]);}const bar=document.querySelector('#cinema-progress-fill');if(bar)bar.style.width=Math.min(100,elapsed/current.plan.total*100)+'%';current.frame=requestAnimationFrame(tick);}
+    // Preload every portrait so short NPC shots never wait on lazy image loading.
+    current.preloads=current.plan.cast.actors.map(name=>{const img=new Image();img.src=photo(name);return img;});
     requestPlay();tick();overlay.querySelector('[data-cinema="skip"]').focus();
   }
   playOpening=function(){start();};

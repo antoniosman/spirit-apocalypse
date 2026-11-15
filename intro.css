@@ -9,6 +9,12 @@
 .cinema-support-person span{bottom:80px;font:9px var(--mono);letter-spacing:2px;color:#cfaa76}.cinema-support-person h2{bottom:24px;font:800 clamp(25px,3vw,45px)/1 var(--head);text-transform:uppercase}
 .cinema-audio-start{position:absolute;z-index:30;top:50%;left:50%;transform:translate(-50%,-50%);width:min(360px,85vw);padding:18px 24px;min-height:50px;background:#23321f;border:1px solid #c9aa71;color:#f4e8cc;cursor:pointer;font:700 14px/1.6 var(--mono)}
 .intro-history-note{font-size:12px!important}.intro-replay-play{margin-top:22px}.save-actions button[data-save=replay-slot]{padding-inline:7px}
+/* Short credits are readable from the first frame, with the same solo framing. */
+.cinema-solo-credit{animation:none!important}.cinema-solo-credit .cinema-cast-copy{animation:soloCreditIn min(180ms,calc(var(--credit-duration)*.2)) ease-out both}.cinema-solo-credit .cinema-portrait{animation-duration:var(--credit-duration)}
+.cinema-solo-credit .cinema-cast-copy h2{font-size:clamp(64px,10.5vw,160px)}
+@keyframes soloCreditIn{from{transform:translateY(7px)}to{transform:none}}
+@media(max-width:440px){.cinema-solo-credit .cinema-cast-copy h2{font-size:60px}}
+@media(prefers-reduced-motion:reduce){.cinema-solo-credit .cinema-cast-copy{animation:none!important}}
 @media(max-width:760px){.header-right #game-replay{grid-column:3;grid-row:2}.header-right #game-update{grid-column:3;grid-row:3}.header-right .pwa-status{grid-column:1/3;grid-row:3}.cinema-support-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:88vw;padding:65px 0}.cinema-support-person{height:33vh;min-height:145px}.cinema-support-person h2{font-size:29px;bottom:14px}.cinema-support-person span{bottom:54px;font-size:8px;letter-spacing:1px}}
 @media(max-height:450px) and (min-width:600px){.cinema-support-grid{grid-template-columns:repeat(4,minmax(0,1fr));padding:45px 0}.cinema-support-person{height:62vh;min-height:0}.cinema-support-person h2{font-size:27px}}
 @media(prefers-reduced-motion:reduce){.cinema-support-person img{animation:none!important}}
